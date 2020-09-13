@@ -11,7 +11,8 @@ import DeleteCourseService from '@modules/courses/services/DeleteCourseService';
 export default class UsersController {
   public async create(request: Request, response: Response): Promise<Response> {
     try {
-      const { title, price, workload, lessons, author, year } = request.body;
+      const user_id = request.user.id;
+      const { title, price, workload, lessons, year } = request.body;
 
       const CreateCourse = container.resolve(CreateCourseService);
 
@@ -20,7 +21,7 @@ export default class UsersController {
         price,
         workload,
         lessons,
-        author,
+        author: user_id,
         year,
       });
 
@@ -49,12 +50,14 @@ export default class UsersController {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
+    const user_id = request.user.id;
     const { course_id } = request.params;
     const { title, price, workload, lessons, year } = request.body;
 
     const updateCourse = container.resolve(UpdateCourseService);
 
     const course = await updateCourse.execute({
+      user_id,
       course_id,
       title,
       price,
@@ -67,10 +70,11 @@ export default class UsersController {
   }
 
   public async delete(request: Request, response: Response): Promise<Response> {
+    const user_id = request.user.id;
     const { course_id } = request.params;
     const deleteCourse = container.resolve(DeleteCourseService);
 
-    await deleteCourse.execute({ course_id });
+    await deleteCourse.execute({ course_id, user_id });
 
     return response.status(204).json();
   }

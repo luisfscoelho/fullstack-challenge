@@ -6,6 +6,7 @@ import Course from '../infra/typeorm/entities/Course';
 import ICoursesRepository from '../repositories/ICoursesRepository';
 
 interface IRequest {
+  user_id: string;
   course_id: string;
   title: string;
   price: number;
@@ -22,6 +23,7 @@ export default class ListCoursesService {
   ) {}
 
   public async execute({
+    user_id,
     course_id,
     title,
     price,
@@ -33,6 +35,10 @@ export default class ListCoursesService {
 
     if (!course) {
       throw new AppError('Course not found');
+    }
+
+    if (course.author_id !== user_id) {
+      throw new AppError('You ca not update this course');
     }
 
     course.title = title;
