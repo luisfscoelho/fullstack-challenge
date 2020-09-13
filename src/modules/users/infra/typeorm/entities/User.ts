@@ -4,14 +4,18 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Exclude } from 'class-transformer';
 
+import Course from '@modules/courses/infra/typeorm/entities/Course';
+import Favorite from '@modules/favorites/infra/typeorm/entities/Favorite';
+
 @Entity('users')
-class User {
+export default class User {
   @PrimaryGeneratedColumn('uuid')
-  id?: string;
+  id!: string;
 
   @Column()
   name!: string;
@@ -23,11 +27,15 @@ class User {
   @Exclude()
   password!: string;
 
+  @OneToMany(() => Course, course => course.author)
+  courses!: Course[];
+
+  @OneToMany(() => Favorite, favorite => favorite.user)
+  favorites!: Favorite[];
+
   @CreateDateColumn()
-  created_at?: Date;
+  created_at!: Date;
 
   @UpdateDateColumn()
-  updated_at?: Date;
+  updated_at!: Date;
 }
-
-export default User;
